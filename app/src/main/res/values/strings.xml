@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Find Dev</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Strings related to Firebase-->
+    <string name="SWY">Sharing With You</string>
+    <string name="YSW">You Sharing With</string>
+</resources>

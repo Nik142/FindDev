@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "617581493094",
+    "firebase_url": "https://finddevice-acf99.firebaseio.com",
+    "project_id": "finddevice-acf99",
+    "storage_bucket": "finddevice-acf99.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:617581493094:android:2216d1c9f402cbc4",
+        "android_client_info": {
+          "package_name": "com.example.nikhil.finddev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "617581493094-1si2liq3g6t2v0afl5nf29aqrfpresgs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.nikhil.finddev",
+            "certificate_hash": "f2dcc198915a0ca67e7d2d5c6f0712718a7b1fd1"
+          }
+        },
+        {
+          "client_id": "617581493094-tmfkp3cevb4oocsagg390dn6btejnrvq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2TilxOMaNEmBh8jPQ8tcY-TmeeavIkuQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "617581493094-tmfkp3cevb4oocsagg390dn6btejnrvq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
