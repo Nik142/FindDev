@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -24,9 +25,9 @@ public class SignUp extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private String mail, pass, SWY, YSW;
     private static String pnumber;
-    FirebaseDatabase firebaseDatabase;
-    DatabaseReference myRef;
-    FirebaseUser user;
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference myRef, idRef;
+    private FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +41,7 @@ public class SignUp extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
         myRef = firebaseDatabase.getReference().child("Users");
+        idRef = firebaseDatabase.getReference().child("userId");
     }
 
     public void Create(View view){
@@ -59,13 +61,23 @@ public class SignUp extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
-                        user = mAuth.getCurrentUser();
-                        myRef.child(pnumber).child(SWY).setValue("No Value");
-                        myRef.child(pnumber).child(YSW).setValue("No Value");
+                        if(task.isSuccessful()){
+
+                            user = mAuth.getCurrentUser();
+                            myRef.child(pnumber).child(SWY).setValue("No");
+                            myRef.child(pnumber).child(YSW).setValue("No");
+                            idRef.child(user.getUid()).setValue(pnumber);
+
+                            startActivity(new Intent(SignUp.this,MainDisplay.class));
+                            SignUp.this.finish();
+                        }
+                        else{
+                            Toast.makeText(getApplicationContext(),"Sign Up failed",Toast.LENGTH_LONG).show();
+                        }
+
                     }
                 });
 
-        startActivity(new Intent(SignUp.this,MainDisplay.class));
     }
 
     private boolean validateForm() {

@@ -9,15 +9,16 @@ import android.view.ViewGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class RecyclerViewAdapter_YSW extends RecyclerView.Adapter <RecyclerViewAdapter_YSW.MyViewHolder> {
 
-    List<FireModel> list;
+    ArrayList<HashMap<String,String>> list;
     Context context;
     String sharingStatus;
 
-    public RecyclerViewAdapter_YSW(List<FireModel> list, Context context) {
+    public RecyclerViewAdapter_YSW(ArrayList<HashMap<String,String>> list, Context context) {
         this.list = list;
         this.context = context;
     }
@@ -33,51 +34,29 @@ public class RecyclerViewAdapter_YSW extends RecyclerView.Adapter <RecyclerViewA
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
-        FireModel myList = list.get(position);
-        MyViewHolder.name.setText(myList.getName());
-        MyViewHolder.number.setText(myList.getPhone());
-        sharingStatus = myList.getStatus();
+        HashMap<String,String> temp = list.get(position);
+        holder.name.setText(temp.get("Name"));
+        sharingStatus = temp.get("Status");
+
         if(sharingStatus.equals("True")){
-            MyViewHolder.aSwitch.setChecked(true);
+            holder.aSwitch.setChecked(true);
         }
         else{
-            MyViewHolder.aSwitch.setChecked(false);
+            holder.aSwitch.setChecked(false);
         }
     }
 
     @Override
     public int getItemCount() {
-
-        int arr = 0;
-
-        try{
-            if(list.size()==0){
-
-                arr = 0;
-
-            }
-            else{
-
-                arr=list.size();
-            }
-
-
-
-        }catch (Exception e){
-
-
-
-        }
-
-        return arr;
+        return list.size();
     }
 
 
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
 
-        static TextView name, number;
-        static Switch aSwitch;
+        TextView name, number;
+        Switch aSwitch;
 
         public MyViewHolder(View itemView) {
             super(itemView);

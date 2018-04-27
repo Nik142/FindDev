@@ -20,6 +20,7 @@
         android:layout_gravity="end|bottom"
         android:layout_margin="16dp"
         android:src="@android:drawable/ic_input_add"
-        app:fabSize="normal" />
+        app:fabSize="normal"
+        app:elevation="5dp" />
 
 </FrameLayout>

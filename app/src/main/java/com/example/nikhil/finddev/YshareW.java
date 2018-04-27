@@ -2,6 +2,7 @@ package com.example.nikhil.finddev;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,6 +20,8 @@ import android.view.ViewGroup;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,6 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
@@ -34,11 +38,13 @@ public class YshareW extends Fragment {
 
     FloatingActionButton fab;
     private final int contactReq = 12;
+    FirebaseAuth mAuth;
     FirebaseDatabase database;
-    DatabaseReference myRef;
+    DatabaseReference myRef, idRef;
+    FirebaseUser user;
     Switch aSwitch;
-    String YSW, SWY;
-    List<FireModel> list;
+    String YSW, SWY, pNumber = "";
+    ArrayList<HashMap<String,String>> list;
     RecyclerView recycle;
 
     @Override
@@ -54,11 +60,7 @@ public class YshareW extends Fragment {
 
         recycle = getView().findViewById(R.id.recyclerViewYSW);
 
-        RecyclerViewAdapter_YSW recyclerAdapter = new RecyclerViewAdapter_YSW(list,getContext());
-        RecyclerView.LayoutManager recyce = new GridLayoutManager(getContext(),1);
-        recycle.setLayoutManager(recyce);
-        recycle.setItemAnimator( new DefaultItemAnimator());
-        recycle.setAdapter(recyclerAdapter);
+
 
         fab = getView().findViewById(R.id.newContactFab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -72,27 +74,47 @@ public class YshareW extends Fragment {
 
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference().child("Users");
+        idRef = database.getReference().child("userId");
+
+           SharedPreferences preferences = getActivity().getSharedPreferences("FindDev",Context.MODE_PRIVATE);
+           pNumber = preferences.getString("pNumber",null);
+
+           Toast.makeText(getActivity().getApplicationContext(),pNumber,Toast.LENGTH_LONG).show();
 
         SWY = getResources().getString(R.string.SWY);
         YSW = getResources().getString(R.string.YSW);
 
-        myRef.child(SignUp.getNumber()).child(YSW).addValueEventListener(new ValueEventListener() {
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        myRef.child(pNumber).child(YSW).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                list = new ArrayList<FireModel>();
+                list = new ArrayList<>();
                 for(DataSnapshot objSnapshot : dataSnapshot.getChildren()){
 
-                    FireModel value = objSnapshot.getValue(FireModel.class);
-                    FireModel fire = new FireModel();
-                    String name = value.getName();
-                    String phone = value.getPhone();
-                    String status = value.getStatus();
-                    fire.setName(name);
-                    fire.setPhone(phone);
-                    fire.setStatus(status);
-                    list.add(fire);
+                    HashMap<String,String> samples = new HashMap<>();
+
+                    ArrayList<String> tempValues = (ArrayList<String>) objSnapshot.getValue();
+
+                    String name = tempValues.get(0);
+                    String stat = tempValues.get(1);
+
+                    samples.put("Name", name);
+                    samples.put("Status", stat);
+                    list.add(samples);
+
                 }
+
+                RecyclerViewAdapter_YSW recyclerAdapter = new RecyclerViewAdapter_YSW(list,getContext());
+                RecyclerView.LayoutManager recyce = new GridLayoutManager(getContext(),1);
+                recycle.setLayoutManager(recyce);
+                recycle.setItemAnimator( new DefaultItemAnimator());
+                recycle.setAdapter(recyclerAdapter);
             }
 
             @Override
@@ -143,13 +165,19 @@ public class YshareW extends Fragment {
 
                         if(obj.equals(finalPhoneNumber)){
 
-                            myRef.child(SignUp.getNumber()).child(YSW).child(finalPhoneNumber).child("Name").setValue(finalContactName);
-                            myRef.child(SignUp.getNumber()).child(YSW).child(finalPhoneNumber).child("Status").setValue("True");
+                            myRef.child(pNumber).child(YSW).child(finalPhoneNumber)
+                                    .child("0").setValue(finalContactName);// " 0 " = " Name "
+                            myRef.child(pNumber).child(YSW).child(finalPhoneNumber)
+                                    .child("1").setValue("True");// " 1 " = " Status "
 
-                            myRef.child(finalPhoneNumber).child(SWY).child(SignUp.getNumber()).child("Name").setValue("Dummy Name");
-                            myRef.child(finalPhoneNumber).child(SWY).child(SignUp.getNumber()).child("Added Back").setValue("No");
-                            myRef.child(finalPhoneNumber).child(SWY).child(SignUp.getNumber()).child("Status").setValue("True");
-                            myRef.child(finalPhoneNumber).child(SWY).child(SignUp.getNumber()).child("Live Status").setValue("False");
+                            myRef.child(finalPhoneNumber).child(SWY).child(pNumber)
+                                    .child("0").setValue("Dummy Name");
+                            myRef.child(finalPhoneNumber).child(SWY).child(pNumber)
+                                    .child("2").setValue("No");// " 2 " = " Added Back"
+                            myRef.child(finalPhoneNumber).child(SWY).child(pNumber)
+                                    .child("1").setValue("True");
+                            myRef.child(finalPhoneNumber).child(SWY).child(pNumber)
+                                    .child("3").setValue("False");// " 3 " = " Live status "
                         }
                         else{
                             Toast.makeText(getContext(),"This user does not exist",Toast.LENGTH_LONG).show();
